@@ -71,22 +71,27 @@ class Interpreter(object):
         token = self.current_token
         self.eat(INTEGER)
         return token.value
-    def expr(self):
+    def term(self):
         result = self.factor()
-        while self.current_token.type in (PLUS, MINUS, MUL, DIV):
+        while self.current_token.type in (MUL, DIV):
             token = self.current_token
-            if token.type == PLUS:
-                self.eat(PLUS)
-                result = result + self.factor()
-            elif token.type == MINUS:
-                self.eat(MINUS)
-                result = result - self.factor()
             if token.type == MUL:
                 self.eat(MUL)
                 result = result * self.factor()
             elif token.type == DIV:
                 self.eat(DIV)
                 result = result // self.factor()
+        return result
+    def expr(self):
+        result = self.term()
+        while self.current_token.type in (PLUS, MINUS):
+            token = self.current_token
+            if token.type == PLUS:
+                self.eat(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.eat(MINUS)
+                result = result - self.term()
         return result
 def main():
     while True:
@@ -102,4 +107,3 @@ def main():
         print(result)
 if __name__ == '__main__':
     main()
-        
